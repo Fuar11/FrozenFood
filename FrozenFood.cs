@@ -110,14 +110,18 @@ namespace FrozenFood
                     Random rand = new Random();
 
                     float randomFrozen = rand.Next(40, 100);
+                    float randomFrozenInContainer = rand.Next(5, 50);
 
                     m_PercentFrozen = randomFrozen; //if food item is new (i.e. you entered the scene for the first time) and it's cold in there, set to a temp base half frozen value
+                    if (IsInBackpack()) m_PercentFrozen = 0f; //if it's in your backpack, don't freeze it. this is if the player spawns indoors with food in their pack
+                    else if (IsInContainer()) m_PercentFrozen = randomFrozenInContainer; //if it's in container, freeze a little bit
                 }
                 else if (!GameManager.GetWeatherComponent().IsIndoorEnvironment())
                 {
-                    m_PercentFrozen = 100f;
+                    if (IsInBackpack()) m_PercentFrozen = 0f; //if it's in your backpack, don't freeze it. player gets a starting chance >:)
+                    m_PercentFrozen = 100f; //if it's not in your backpack, it's been outside for a while so it's frozen
                 }
-                else m_PercentFrozen = 52f; //temp testing value
+                else m_PercentFrozen = 0f;
 
                 //I don't even know if we need to save here vvv
 
@@ -255,6 +259,7 @@ namespace FrozenFood
 
             string Item = m_GearItem.name;
             bool InPack = IsInBackpack();
+            bool InContainer = IsInContainer();
             string foodType = GetFoodType(Item);
 
             float TTF = 0;
@@ -277,6 +282,10 @@ namespace FrozenFood
             {
                 TTF /= 1.5f;
             }
+            else if (InContainer)
+            {
+                TTF /= 2f;
+            }
 
             return TTF;
 
@@ -292,6 +301,7 @@ namespace FrozenFood
             float Temp = GetCurrentAirTemp();
             string Item = m_GearItem.name;
             bool InPack = IsInBackpack();
+            bool InContainer = IsInContainer();
             string foodType = GetFoodType(Item);
 
             if (simulatePositiveTemp) Temp = m_TempToLoadDataWith;
@@ -315,6 +325,10 @@ namespace FrozenFood
             if (InPack)
             {
                 TTT /= 1.5f;
+            }
+            else if (InContainer)
+            {
+                TTT /= 2f;
             }
 
             return TTT;
@@ -368,9 +382,11 @@ namespace FrozenFood
         public bool IsInContainer()
         {
 
+            if (IsInBackpack()) return false;
 
+            if (!this.gameObject.transform.parent.gameObject.name.Contains("gear")) return true;
 
-            return true;
+            return false;
 
         }
         public void Dropped()
