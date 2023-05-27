@@ -15,6 +15,25 @@ namespace FrozenFood.Patches
     internal class Patches
     {
 
+        public static string lastScene = "";
+
+        [HarmonyPatch(typeof(OutdoorSceneRoot), nameof(OutdoorSceneRoot.OnSceneUnload))]
+
+        public class test
+        {
+
+            private static void Prefix(ref string nextScene)
+            {
+
+                MelonLogger.Msg("Next scene: {0}", nextScene);
+                MelonLogger.Msg("Current scene: {0}", GameManager.m_ActiveScene);
+
+                lastScene = GameManager.m_ActiveScene;
+
+            }
+
+        }
+
         [HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.CanUseFoodInventoryItem))]
 
         public class EatingRestriction

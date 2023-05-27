@@ -30,7 +30,9 @@ namespace FrozenFood
 
         private bool m_DroppedIndoors;
 
-        private float m_PercentFrozen; //temporary
+        private float m_PercentFrozen;
+
+        private float m_PercentFrozenAtLastLoad;
 
         private float m_TempToLoadDataWith;
 
@@ -74,8 +76,17 @@ namespace FrozenFood
 
                 if (ldp != null)
                 {
+                    if (Patches.Patches.lastScene.ToLowerInvariant().Contains("menu"))
+                    {
+                        m_PercentFrozen = ldp.m_PercentFrozenAtLastLoad;
+                    }
+                    else
+                    {
+                        m_PercentFrozen = ldp.m_PercentFrozen;
+                        m_PercentFrozenAtLastLoad = ldp.m_PercentFrozen;
+                    }
+
                     float hoursSinceSaving = GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused() - ldp.m_HoursPlayedAtTimeOfSave;
-                    m_PercentFrozen = ldp.m_PercentFrozen;
 
                     if (!Il2Cpp.Utils.IsZero(hoursSinceSaving))
                     {
@@ -96,11 +107,10 @@ namespace FrozenFood
                             m_TempToLoadDataWith = ldp.m_ActualTemperature;
                             DoThawOrFreeze(hoursSinceSaving); //if the temperature is <0. At this point if there was a fire and it thawed, it will start to freeze again
 
-                            Serialize(); //this saves the data, it is used for going outside only
+                          //  Serialize(); //this saves the data, it is used for going outside only
                         }
                     }
 
-                    if (ldp.m_IsInBackpack) m_PercentFrozen = ldp.m_PercentFrozen; //if item was in the backpack the whole time, no need to do all that calculation, just pull the value over from previous scene
                 }
             }
             else
@@ -159,6 +169,7 @@ namespace FrozenFood
 
             FrozenFoodSaveDataProxy sdp = new FrozenFoodSaveDataProxy();
             sdp.m_PercentFrozen = m_PercentFrozen;
+            sdp.m_PercentFrozenAtLastLoad = m_PercentFrozenAtLastLoad;
             sdp.m_HoursPlayedAtTimeOfSave = GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused();
 
 

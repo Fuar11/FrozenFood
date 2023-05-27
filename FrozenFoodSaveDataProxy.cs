@@ -11,6 +11,7 @@ namespace FrozenFood
 
         public float m_PercentFrozen { get; set; }
 
+        public float m_PercentFrozenAtLastLoad { get; set; }
         public bool m_IsInBackpack { get; set; }
         public float m_HoursRemainingOnClosestFire { get; set; }
         public float m_MaxFireTemperature { get; set; }
