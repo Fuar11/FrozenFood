@@ -80,25 +80,27 @@ namespace FrozenFood
                     if (!Il2Cpp.Utils.IsZero(hoursSinceSaving))
                     {
 
-                        if (ldp.m_HoursRemainingOnClosestFire > 0f)
+                        if (ldp.m_HoursRemainingOnClosestFire > 0f) 
                         {
+                            //this checks if the time remaining on fire or time passed since last save is greater than one another
                             float timeToModifyFrozenValueBy = Mathf.Min(ldp.m_HoursRemainingOnClosestFire, hoursSinceSaving);
+                            //if this variable is m_HoursRemainingOnClosestFire then it means the fire is out. if it's hoursSinceSaving then the fire is still going
 
-                            m_TempToLoadDataWith = ldp.m_MaxFireTemperature;
-                            DoThawOrFreeze(timeToModifyFrozenValueBy, nearFireOverride: true);
-                            hoursSinceSaving -= timeToModifyFrozenValueBy;
+                            m_TempToLoadDataWith = ldp.m_MaxFireTemperature; //temperature used to calculate the thaw amount because the fire WAS going at some point, so this value is used to determine the temperature at that point
+                            DoThawOrFreeze(timeToModifyFrozenValueBy, nearFireOverride: true); //override used to tell the method to thaw, even if the current temperature <0 and the fire is out
+                            hoursSinceSaving -= timeToModifyFrozenValueBy; //this variable now becomes the amount of time passed since the fire has gone out
                         }
 
-                        if (hoursSinceSaving > 0f)
+                        if (hoursSinceSaving > 0f) //if there is time left since fire has gone out, thaw or freeze according to the temperature from before the fire (in line with current temp)
                         {
                             m_TempToLoadDataWith = ldp.m_ActualTemperature;
-                            DoThawOrFreeze(hoursSinceSaving);
+                            DoThawOrFreeze(hoursSinceSaving); //if the temperature is <0. At this point if there was a fire and it thawed, it will start to freeze again
 
-                            Serialize();
+                            Serialize(); //this saves the data, it is used for going outside only
                         }
                     }
 
-                    if (ldp.m_IsInBackpack) m_PercentFrozen = ldp.m_PercentFrozen;
+                    if (ldp.m_IsInBackpack) m_PercentFrozen = ldp.m_PercentFrozen; //if item was in the backpack the whole time, no need to do all that calculation, just pull the value over from previous scene
                 }
             }
             else
@@ -144,9 +146,10 @@ namespace FrozenFood
                         loadCheck = true;
                     }
 
-                    //do stuff
                     float tODHours = GameManager.GetTimeOfDayComponent().GetTODHours(Time.deltaTime);
                     DoThawOrFreeze(tODHours);
+
+                    //texture stuff happens here
                 }
         }
 
