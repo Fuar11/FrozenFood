@@ -28,7 +28,6 @@ namespace FrozenFood.Patches
                 GameObject food = __instance.gameObject;
 
                 Guid uniqueId = Guid.NewGuid();
-                MelonLogger.Msg("New GUID: {0}", uniqueId.ToString());
                 ObjectGuid.MaybeAttachObjectGuidAndRegister(food, uniqueId.ToString());
 
                 food.AddComponent<FrozenFood>();

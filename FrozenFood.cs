@@ -75,7 +75,6 @@ namespace FrozenFood
                 if (ldp != null)
                 {
                     float hoursSinceSaving = GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused() - ldp.m_HoursPlayedAtTimeOfSave;
-                    MelonLogger.Msg("Frozen amount when loading, before making adjustment: {0}", ldp.m_PercentFrozen);
                     m_PercentFrozen = ldp.m_PercentFrozen;
 
                     if (!Il2Cpp.Utils.IsZero(hoursSinceSaving))
@@ -95,13 +94,8 @@ namespace FrozenFood
                             m_TempToLoadDataWith = ldp.m_ActualTemperature;
                             DoThawOrFreeze(hoursSinceSaving);
 
-                            //in case user quits the game without saving after loading into new scene
                             Serialize();
                         }
-
-                        MelonLogger.Msg("Frozen amount when loading, after making adjustment: {0}", m_PercentFrozen);
-
-
                     }
 
                     if (ldp.m_IsInBackpack) m_PercentFrozen = ldp.m_PercentFrozen;
