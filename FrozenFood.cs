@@ -358,6 +358,11 @@ namespace FrozenFood
         {
             return GameManager.GetWeatherComponent().GetCurrentTemperature();
         }
+
+        public float GetPercentFrozen()
+        {
+            return m_PercentFrozen;
+        }
         public bool IsThawed()
         {
             return m_PercentFrozen == 0f;
