@@ -16,7 +16,7 @@ namespace FrozenFood.Patches
 
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.ProcessItems))]
 
-        public class test
+        public class UpdateItemInInventory
         {
 
             private static void Postfix(Inventory __instance)
@@ -30,12 +30,34 @@ namespace FrozenFood.Patches
                     {
                         if (gi.m_FoodItem)
                         {
-                            gi.gameObject.GetComponent<FrozenFood>().Update();
+
+                            FrozenFood ff = gi.gameObject.GetComponent<FrozenFood>();
+
+                            if(ff != null) ff.Update();
                         }
+                           
                     }
                 }
             }
         }
+
+        [HarmonyPatch(typeof(Container), nameof(Container.UpdateContainer))]
+
+        public class UpdateItemInContainer
+        {
+            private static void Postfix(Container __instance)
+            {
+                foreach(GearItem gi in __instance.m_Items)
+                {
+                    FrozenFood ff = gi.gameObject.GetComponent<FrozenFood>();
+
+                    if (ff != null) ff.Update();
+                }
+            }
+        }
+
+
+       
 
     }
 }

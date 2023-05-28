@@ -12,8 +12,8 @@ namespace FrozenFood.Patches
 {
     internal class MiscPatches
     {
-       
 
+     
         /*
         [HarmonyPatch(typeof(PlayerManager), "EnterInspectGearMode", new Type[] {typeof (GearItem), typeof(Container), typeof(IceFishingHole), typeof(Harvestable), typeof(CookingPotItem)})]
         public class CheckFirstInspectClass

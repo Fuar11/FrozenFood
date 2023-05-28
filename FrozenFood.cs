@@ -273,8 +273,6 @@ namespace FrozenFood
             }
 
             string Item = m_GearItem.name;
-            bool InPack = IsInBackpack();
-            bool InContainer = IsInContainer();
             string foodType = GetFoodType(Item);
 
             float TTF = 0;
@@ -291,13 +289,13 @@ namespace FrozenFood
             else if (Temp < -30) TemperatureMultiplier = 2f;
             else TemperatureMultiplier = 1f;
 
-            TTF = TTF * TemperatureMultiplier;
+            TTF *= TemperatureMultiplier;
 
-            if (InPack)
+            if (IsInBackpack())
             {
                 TTF /= 1.5f;
             }
-            else if (InContainer)
+            else if (IsInContainer())
             {
                 TTF /= 2f;
             }
@@ -315,8 +313,6 @@ namespace FrozenFood
 
             float Temp = GetCurrentAirTemp();
             string Item = m_GearItem.name;
-            bool InPack = IsInBackpack();
-            bool InContainer = IsInContainer();
             string foodType = GetFoodType(Item);
 
             if (simulatePositiveTemp) Temp = m_TempToLoadDataWith;
@@ -337,11 +333,11 @@ namespace FrozenFood
 
             TTT = TTT * TemperatureMultiplier;
 
-            if (InPack)
+            if (IsInBackpack())
             {
                 TTT /= 1.5f;
             }
-            else if (InContainer)
+            else if (IsInContainer())
             {
                 TTT /= 2f;
             }
@@ -387,31 +383,13 @@ namespace FrozenFood
 
         public bool IsInBackpack()
         {
-            int id = m_GearItem.gameObject.GetInstanceID();
-
-            foreach(GearItemObject gio in GameManager.GetInventoryComponent().m_Items)
-            {
-                if(gio.m_GearItem.gameObject.GetInstanceID() == id)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return m_GearItem.m_InPlayerInventory;
         }
 
+        //not working
         public bool IsInContainer()
         {
-
-            if (IsInBackpack()) return false;
-
-            if (this.gameObject.transform.parent == null) return false;
-            else
-            {
-                if (!this.gameObject.transform.parent.gameObject.name.Contains("gear")) return true;
-            }
-
-            return false;
-
+            return this.gameObject.GetComponent<GearItem>().IsInsideContainer();
         }
         public void Dropped()
         {
