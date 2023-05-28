@@ -147,7 +147,7 @@ namespace FrozenFood
 
         public void Update()
         {
-            
+        
                 if (!GameManager.m_IsPaused)
                 {
                     if (!loadCheck)
@@ -160,6 +160,7 @@ namespace FrozenFood
                     DoThawOrFreeze(tODHours);
 
                     //texture stuff happens here
+
                 }
         }
 
@@ -403,7 +404,11 @@ namespace FrozenFood
 
             if (IsInBackpack()) return false;
 
-            if (!this.gameObject.transform.parent.gameObject.name.Contains("gear")) return true;
+            if (this.gameObject.transform.parent == null) return false;
+            else
+            {
+                if (!this.gameObject.transform.parent.gameObject.name.Contains("gear")) return true;
+            }
 
             return false;
 
