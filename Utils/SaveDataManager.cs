@@ -10,7 +10,7 @@ namespace FrozenFood.Utils
     internal class SaveDataManager
     {
 
-        ModDataManager dm = new ModDataManager("Frozen Food", true);
+        ModDataManager dm = new ModDataManager("Frozen Food", false);
         public void Save(string data, string suffix)
         {
             dm.Save(data, suffix);
