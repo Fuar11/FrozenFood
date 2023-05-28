@@ -38,6 +38,8 @@ namespace FrozenFood
 
         private float m_PercentFrozenAtLastLoad;
 
+        private Nullable <float> m_TimeSodaBeenFrozen;
+
         private float m_TempToLoadDataWith;
 
         public float m_ThawPercentPerHour;
@@ -93,12 +95,14 @@ namespace FrozenFood
 
                     m_ForceFrozen = ldp.m_ForceFrozen;
 
+                    if (m_GearItem.name.ToLowerInvariant().Contains("soda")) m_TimeSodaBeenFrozen = ldp.m_TimeSodaBeenFrozen;
+
                     float hoursSinceSaving = GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused() - ldp.m_HoursPlayedAtTimeOfSave;
 
                     if (!Il2Cpp.Utils.IsZero(hoursSinceSaving))
                     {
 
-                        if (ldp.m_HoursRemainingOnClosestFire > 0f) 
+                        if (ldp.m_HoursRemainingOnClosestFire > 0f)
                         {
                             //this checks if the time remaining on fire or time passed since last save is greater than one another
                             float timeToModifyFrozenValueBy = Mathf.Min(ldp.m_HoursRemainingOnClosestFire, hoursSinceSaving);
@@ -114,7 +118,7 @@ namespace FrozenFood
                             m_TempToLoadDataWith = ldp.m_ActualTemperature;
                             DoThawOrFreeze(hoursSinceSaving); //if the temperature is <0. At this point if there was a fire and it thawed, it will start to freeze again
 
-                          //  Serialize(); //this saves the data, it is used for going outside only
+                            //  Serialize(); //this saves the data, it is used for going outside only
                         }
                     }
 
@@ -154,21 +158,37 @@ namespace FrozenFood
 
         public void Update()
         {
-        
-                if (!GameManager.m_IsPaused)
+
+            if (!GameManager.m_IsPaused)
+            {
+                if (!loadCheck)
                 {
-                    if (!loadCheck)
-                    {
-                        LoadOrInitData();
-                        loadCheck = true;
-                    }
-
-                    float tODHours = GameManager.GetTimeOfDayComponent().GetTODHours(Time.deltaTime);
-                    DoThawOrFreeze(tODHours);
-
-                    //texture stuff happens here
-
+                    LoadOrInitData();
+                    loadCheck = true;
                 }
+
+                //Sodas explode after being frozen for some time
+                if (m_GearItem.name.ToLowerInvariant().Contains("soda"))
+                {
+
+                    if (m_PercentFrozen == 100f)
+                    {
+                        if (m_TimeSodaBeenFrozen == null) m_TimeSodaBeenFrozen = GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused();
+                    }
+                    else
+                    {
+                        m_TimeSodaBeenFrozen = null;
+                    }
+                }
+
+                BlowUpSoda();
+
+                float tODHours = GameManager.GetTimeOfDayComponent().GetTODHours(Time.deltaTime);
+                DoThawOrFreeze(tODHours);
+
+                //texture stuff happens here
+
+            }
         }
 
         public void Serialize()
@@ -180,6 +200,8 @@ namespace FrozenFood
             sdp.m_PercentFrozenAtLastLoad = m_PercentFrozenAtLastLoad;
             sdp.m_HoursPlayedAtTimeOfSave = GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused();
             sdp.m_ForceFrozen = m_ForceFrozen;
+
+            if(m_GearItem.name.ToLowerInvariant().Contains("soda")) sdp.m_TimeSodaBeenFrozen = m_TimeSodaBeenFrozen;
 
             if (!IsInBackpack())
             {
@@ -233,7 +255,7 @@ namespace FrozenFood
             //if item has just been cooked, instantly thaw it
             if (m_FoodItem.IsHot()) m_PercentFrozen = 0;
 
-            if(m_PercentFrozen > 0f)
+            if (m_PercentFrozen > 0f)
             {
                 m_PercentFrozen -= amountToThaw;
             }
@@ -247,15 +269,15 @@ namespace FrozenFood
             //if item is hot, do not freeze
             if (m_FoodItem.IsHot()) return;
 
-            if(m_PercentFrozen < 100f)
+            if (m_PercentFrozen < 100f)
             {
                 m_PercentFrozen += amountToFreeze;
             }
 
             //Maple Syrup cannot freeze solid due to the sugars in it
-            if(m_GearItem.name == "GEAR_MapleSyrup" && m_PercentFrozen >= 50)
+            if (m_GearItem.name == "GEAR_MapleSyrup" && m_PercentFrozen >= 50)
             {
-                if(!m_ForceFrozen) m_PercentFrozen = 49f;
+                if (!m_ForceFrozen) m_PercentFrozen = 49f;
             }
             else if ((GetFoodType(m_GearItem.name) == "Dry") && m_PercentFrozen >= 26)
             {
@@ -285,7 +307,7 @@ namespace FrozenFood
 
             if (m_TempToLoadDataWith != null)
             {
-               Temp = m_TempToLoadDataWith;
+                Temp = m_TempToLoadDataWith;
             }
             else
             {
@@ -397,6 +419,14 @@ namespace FrozenFood
             return GameManager.GetWeatherComponent().GetCurrentTemperature();
         }
 
+        public void BlowUpSoda()
+        {
+            if (GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused() - m_TimeSodaBeenFrozen >= 6)
+            {
+                MelonLogger.Msg("Soda go boom yo!");
+                Destroy(m_GearItem.gameObject);
+            }
+        }
         public float GetPercentFrozen()
         {
             return m_PercentFrozen;
@@ -416,7 +446,6 @@ namespace FrozenFood
             return m_GearItem.m_InPlayerInventory;
         }
 
-        //not working
         public bool IsInContainer()
         {
             return this.gameObject.GetComponent<GearItem>().IsInsideContainer();
@@ -461,6 +490,6 @@ namespace FrozenFood
             return m_PercentFrozen / 100f;
         }
 
-      
+
     }
 }

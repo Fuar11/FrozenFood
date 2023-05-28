@@ -93,7 +93,7 @@ namespace FrozenFood.Patches
             {
                 GameObject food = __instance.gameObject;
 
-                if (food.name == "GEAR_CattailStalk" || food.name.ToLowerInvariant().Contains("acorn")) return;
+                if (food.name == "GEAR_CattailStalk" || food.name.ToLowerInvariant().Contains("acorn") || food.name.ToLowerInvariant().Contains("cup")) return;
 
                 Guid uniqueId = Guid.NewGuid();
                 ObjectGuid.MaybeAttachObjectGuidAndRegister(food, uniqueId.ToString());
