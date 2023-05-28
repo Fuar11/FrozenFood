@@ -25,8 +25,6 @@ Frozen Food aims to add a bit more realism to the game by allowing food items to
 * Install MelonLoader by downloading and running [MelonLoader.Installer.exe](https://github.com/HerpDerpinstine/MelonLoader/releases/latest/download/MelonLoader.Installer.exe)
 * Install the following dependencies in your mods folder: 
 
-- [ModSettings](https://github.com/dommrogers/ModSettings/releases/latest)
-- [LocalizationUtilities](https://github.com/dommrogers/LocalizationUtilities/releases/latest)
 - [ModData](https://github.com/dommrogers/ModData/releases/latest)
 
 * Download and install the latest release and drop it in your mods folder
