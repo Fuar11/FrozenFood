@@ -1,4 +1,4 @@
-﻿using Il2Cpp;
+﻿    using Il2Cpp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,9 +30,7 @@ namespace FrozenFood.Patches
                     {
                         if (gi.m_FoodItem)
                         {
-
                             FrozenFood ff = gi.gameObject.GetComponent<FrozenFood>();
-
                             if(ff != null) ff.Update();
                         }
                            

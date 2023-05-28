@@ -24,9 +24,13 @@ namespace FrozenFood
 
         private GearItem m_GearItem = new GearItem();
 
+        private FoodItem m_FoodItem = new FoodItem();
+
         public string m_GUID;
 
         private bool loadCheck;
+
+        private bool m_ForceFrozen;
 
         private bool m_DroppedIndoors;
 
@@ -45,6 +49,7 @@ namespace FrozenFood
 
 
             m_GearItem = this.GetComponent<GearItem>();
+            m_FoodItem = this.GetComponent<FoodItem>();
             loadCheck = false;
 
         }
@@ -85,6 +90,8 @@ namespace FrozenFood
                         m_PercentFrozen = ldp.m_PercentFrozen;
                         m_PercentFrozenAtLastLoad = ldp.m_PercentFrozen;
                     }
+
+                    m_ForceFrozen = ldp.m_ForceFrozen;
 
                     float hoursSinceSaving = GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused() - ldp.m_HoursPlayedAtTimeOfSave;
 
@@ -172,7 +179,7 @@ namespace FrozenFood
             sdp.m_PercentFrozen = m_PercentFrozen;
             sdp.m_PercentFrozenAtLastLoad = m_PercentFrozenAtLastLoad;
             sdp.m_HoursPlayedAtTimeOfSave = GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused();
-
+            sdp.m_ForceFrozen = m_ForceFrozen;
 
             if (!IsInBackpack())
             {
@@ -224,7 +231,7 @@ namespace FrozenFood
         public void Thaw(float amountToThaw)
         {
             //if item has just been cooked, instantly thaw it
-            if (m_GearItem.gameObject.GetComponent<FoodItem>().IsHot()) m_PercentFrozen = 0;
+            if (m_FoodItem.IsHot()) m_PercentFrozen = 0;
 
             if(m_PercentFrozen > 0f)
             {
@@ -238,7 +245,7 @@ namespace FrozenFood
         {
 
             //if item is hot, do not freeze
-            if (m_GearItem.gameObject.GetComponent<FoodItem>().IsHot()) return;
+            if (m_FoodItem.IsHot()) return;
 
             if(m_PercentFrozen < 100f)
             {
@@ -248,12 +255,25 @@ namespace FrozenFood
             //Maple Syrup cannot freeze solid due to the sugars in it
             if(m_GearItem.name == "GEAR_MapleSyrup" && m_PercentFrozen >= 50)
             {
-                m_PercentFrozen = 49f;
+                if(!m_ForceFrozen) m_PercentFrozen = 49f;
+            }
+            else if ((GetFoodType(m_GearItem.name) == "Dry") && m_PercentFrozen >= 26)
+            {
+                if (!m_ForceFrozen) m_PercentFrozen = 25f;
             }
 
             m_PercentFrozen = Mathf.Clamp(m_PercentFrozen, 0f, 100f);
         }
-       
+
+        public void ForceFreeze(float amount)
+        {
+            m_PercentFrozen += amount;
+            m_FoodItem.m_HeatPercent = 0f;
+            m_ForceFrozen = true;
+
+            m_PercentFrozen = Mathf.Clamp(m_PercentFrozen, 0f, 100f);
+        }
+
         public float CalculateTimeToFreeze()
         {
 
@@ -283,7 +303,17 @@ namespace FrozenFood
             else if (foodType == "Wet") TTF += 30;
             else TTF += 25;
 
-            if (Temp < 0 && Temp > -10) TemperatureMultiplier = 1.2f;
+            if (Temp < 0 && Temp > -10)
+            {
+                if (GameManager.GetWeatherComponent().IsIndoorEnvironment())
+                {
+                    TemperatureMultiplier = 1.05f;
+                }
+                else
+                {
+                    TemperatureMultiplier = 1.2f;
+                }
+            }
             else if (Temp < -10 && Temp > -20) TemperatureMultiplier = 1.5f;
             else if (Temp < -20 && Temp > -30) TemperatureMultiplier = 1.7f;
             else if (Temp < -30) TemperatureMultiplier = 2f;
@@ -321,7 +351,7 @@ namespace FrozenFood
             float TemperatureMultiplier = 0;
 
             if (foodType == "Dry") TTT += 60;
-            else if (foodType == "Mid") TTT += 50;
+            else if (foodType == "Mid") TTT += 40;
             else if (foodType == "Wet") TTT += 30;
             else TTT += 40;
 
@@ -349,7 +379,7 @@ namespace FrozenFood
         public string GetFoodType(string item)
         {
             if (item == "GEAR_Crackers" || item == "GEAR_KetchupChips" || item == "GEAR_BeefJerky" || item == "GEAR_GranolaBar" || item == "GEAR_CandyBar") return "Dry";
-            else if (item.ToLowerInvariant().Contains("meat") || item.Contains("CohoSalmon") || item.Contains("LakeWhiteFish") || item.Contains("RainbowTrout") || item.Contains("SmallMouthBass") || item == "GEAR_PinnacleCanPeaches" || item == "GEAR_TomatoSoupCan") return "Wet";
+            else if (item.ToLowerInvariant().Contains("meat") || item.Contains("CohoSalmon") || item.Contains("LakeWhiteFish") || item.Contains("RainbowTrout") || item.Contains("SmallMouthBass") || item == "GEAR_PinnacleCanPeaches" || item == "GEAR_TomatoSoupCan" || item == "GEAR_CannedSardines" || item == "GEAR_PinnacleCanPeaches" || item == "GEAR_CondensedMilk" || item == "GEAR_TomatoSoupCan") return "Wet";
             else return "Mid";
         }
 

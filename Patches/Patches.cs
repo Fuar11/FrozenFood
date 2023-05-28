@@ -24,12 +24,7 @@ namespace FrozenFood.Patches
 
             private static void Prefix(ref string nextScene)
             {
-
-                MelonLogger.Msg("Next scene: {0}", nextScene);
-                MelonLogger.Msg("Current scene: {0}", GameManager.m_ActiveScene);
-
                 lastScene = GameManager.m_ActiveScene;
-
             }
 
         }
@@ -97,6 +92,8 @@ namespace FrozenFood.Patches
             private static void Postfix(FoodItem __instance)
             {
                 GameObject food = __instance.gameObject;
+
+                if (food.name == "GEAR_CattailStalk" || food.name.ToLowerInvariant().Contains("acorn")) return;
 
                 Guid uniqueId = Guid.NewGuid();
                 ObjectGuid.MaybeAttachObjectGuidAndRegister(food, uniqueId.ToString());
