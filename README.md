@@ -11,9 +11,12 @@ Frozen Food aims to add a bit more realism to the game by allowing food items to
 * Meat freezes the quickest, dry items like crackers freeze slower. 
 * Items in containers and backpack will freeze slower, but also thaw slower. Items on the ground will freeze quicker and thaw quicker. Being near a warm fire will thaw items very quickly. 
 * Cooking items with the 'Hot' buff will automatically thaw them completely.
+* Falling in ice or passing under waterfalls will instantly freeze food items in your backpack, depending on location.
+* Sodas that are frozen for more than 6 hours will explode! (Despawn)
 
 ## Planned Features
 
+* Frozen food textures
 * Cooking time modified by frozen amount
 * Weight modified by frozen amount (maybe)
 
