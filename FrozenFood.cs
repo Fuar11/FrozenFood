@@ -171,7 +171,9 @@ namespace FrozenFood
                 if (m_GearItem.name.ToLowerInvariant().Contains("soda"))
                 {
 
-                    if (m_PercentFrozen == 100f)
+                    if (!m_GearItem.m_BeenInPlayerInventory) return;
+
+                    if (m_PercentFrozen == 100f && GetCurrentAirTemp() < -10)
                     {
                         if (m_TimeSodaBeenFrozen == null) m_TimeSodaBeenFrozen = GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused();
                     }
