@@ -383,6 +383,9 @@ namespace FrozenFood
             else if (Temp > 10 && Temp < 20) TemperatureMultiplier = 1.5f;
             else if (Temp > 20 && Temp < 30) TemperatureMultiplier = 1.7f;
             else if (Temp > 30) TemperatureMultiplier = 2f;
+            else if (Temp > 50) TemperatureMultiplier = 2.5f;
+            else if (Temp > 80) TemperatureMultiplier = 2.85f;
+            else if (Temp > 100) TemperatureMultiplier = 3f;
             else TemperatureMultiplier = 1f;
 
             TTT = TTT * TemperatureMultiplier;

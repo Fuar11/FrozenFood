@@ -116,10 +116,6 @@ namespace FrozenFood.Patches
                 {
                     ff.Serialize();
                 }
-                else
-                {
-                    MelonLogger.Error("Cannot serialize because frozen food component can't be found");
-                }
             }
 
         }
