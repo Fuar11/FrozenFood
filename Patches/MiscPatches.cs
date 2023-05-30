@@ -70,54 +70,6 @@ namespace FrozenFood.Patches
 
         }
 
-        [HarmonyPatch(typeof(ItemDescriptionPage), nameof(ItemDescriptionPage.UpdateTopRightStatus))]
-
-        public class AddToInventoryScreenClass
-        {
-
-            private static void Postfix(GearItem gi, ItemDescriptionPage __instance)
-            {
-
-                if (gi.m_FoodItem)
-                {
-                    if(gi.GetComponent<FrozenFood>() != null)
-                    {
-                        if(gi.GetComponent<FrozenFood>().GetFrozenNormalized() > 0f)
-                        {
-                            __instance.m_TopRightStatusLabel.text = gi.GetComponent<FrozenFood>().GetFrozenOnlyString();
-                            if (!string.IsNullOrEmpty(__instance.m_TopRightStatusLabel.text))
-                            {
-                                __instance.m_TopRightStatusLabel.text = __instance.StripBraces(__instance.m_TopRightStatusLabel.text);
-                                __instance.UpdateAndEnableTopRightStatus(__instance.m_TopRightStatusLabel.text, __instance.m_FrozenStatusIcon, __instance.m_FrozenStatusColor);
-
-                                //I know how messy this is. Don't judge pls
-                                __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(5).gameObject.SetActive(false);
-                                __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(6).gameObject.SetActive(false);
-                                __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(7).gameObject.SetActive(false);
-                                __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(8).gameObject.SetActive(false);
-                                __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(9).gameObject.SetActive(false);
-
-                            }
-                        }
-                    }
-                    else
-                    {
-                        MelonLogger.Error("Doesn't have frozen component");
-                    }
-                }
-                else if (gi.m_ClothingItem)
-                {
-                    __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(5).gameObject.SetActive(true);
-                    __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(6).gameObject.SetActive(true);
-                    __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(7).gameObject.SetActive(true);
-                    __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(8).gameObject.SetActive(true);
-                    __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(9).gameObject.SetActive(true);
-                }
-            }
-
-        }
-
-
         [HarmonyPatch(typeof(ItemDescriptionPage), nameof(ItemDescriptionPage.UpdateGearItemDescription))]
 
 
@@ -133,7 +85,7 @@ namespace FrozenFood.Patches
                     {
                         if (gi.m_FoodItem.gameObject.GetComponent<FrozenFood>())
                         {
-                            if (gi.m_FoodItem.gameObject.GetComponent<FrozenFood>().IsThawed()) return;
+                            if (gi.m_FoodItem.gameObject.GetComponent<FrozenFood>().GetPercentFrozen() < 1f) return;
                         }
                     }
 
