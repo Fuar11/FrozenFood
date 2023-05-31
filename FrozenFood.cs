@@ -30,11 +30,15 @@ namespace FrozenFood
 
         private bool loadCheck;
 
+        public bool harvestCheck;
+
         private bool m_ForceFrozen;
 
         private bool m_DroppedIndoors;
 
         private float m_PercentFrozen;
+
+        public float m_PercentFrozenFromHarvest;
 
         private float m_PercentFrozenAtLastLoad;
 
@@ -48,12 +52,9 @@ namespace FrozenFood
 
         public void Awake()
         {
-
-
             m_GearItem = this.GetComponent<GearItem>();
             m_FoodItem = this.GetComponent<FoodItem>();
             loadCheck = false;
-
         }
 
         public void Start()
@@ -127,6 +128,14 @@ namespace FrozenFood
             else
             {
 
+                if (harvestCheck)
+                {
+                    MelonLogger.Msg("Item is coming from carcass, setting frozen amount accordingly");
+                    m_PercentFrozen = m_PercentFrozenFromHarvest;
+                    harvestCheck = false;
+                    return;
+                }
+
                 if (GameManager.GetWeatherComponent().IsIndoorEnvironment() && GetCurrentAirTemp() < 0f)
                 {
 
@@ -141,8 +150,8 @@ namespace FrozenFood
                 }
                 else if (!GameManager.GetWeatherComponent().IsIndoorEnvironment())
                 {
-                    if (IsInBackpack()) m_PercentFrozen = 0f; //if it's in your backpack, don't freeze it. player gets a starting chance >:)
-                    m_PercentFrozen = 100f; //if it's not in your backpack, it's been outside for a while so it's frozen
+                    if (IsInBackpack()) m_PercentFrozen = 0f; //if it's in your backpack, don't freeze it. player gets a starting chance :)
+                    else m_PercentFrozen = 100f; //if it's not in your backpack, it's been outside for a while so it's frozen
                 }
                 else m_PercentFrozen = 0f;
 
