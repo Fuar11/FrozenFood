@@ -13,7 +13,32 @@ namespace FrozenFood.Patches
     internal class MiscPatches
     {
 
-     
+        [HarmonyPatch(typeof(Cookable), nameof(Cookable.GetCookTimeMinutesForCaloriesRemaining))]
+
+        public class CookTimeModifier
+        {
+
+            private static void Postfix(Cookable __instance, ref float __result)
+            {
+
+                if (__instance.gameObject.GetComponent<FrozenFood>())
+                {
+                    float percentFrozen = __instance.gameObject.GetComponent<FrozenFood>().GetPercentFrozen();
+                    float multiplier = 1f;
+
+                    if(percentFrozen >= 50)
+                    {
+                        multiplier = percentFrozen / 50;
+                    }
+
+                    __result *= multiplier;
+                }
+
+            }
+
+
+        }
+
         /*
         [HarmonyPatch(typeof(PlayerManager), "EnterInspectGearMode", new Type[] {typeof (GearItem), typeof(Container), typeof(IceFishingHole), typeof(Harvestable), typeof(CookingPotItem)})]
         public class CheckFirstInspectClass
