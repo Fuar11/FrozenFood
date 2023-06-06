@@ -157,11 +157,12 @@ namespace FrozenFood
 
                 //I don't even know if we need to save here vvv
 
+                /*
                 FrozenFoodSaveDataProxy sdp = new FrozenFoodSaveDataProxy();
                 sdp.m_PercentFrozen = m_PercentFrozen;
 
                 string dataToSave = JsonSerializer.Serialize(sdp); //instance in json format to save with
-                sdm.Save(dataToSave, m_GUID); //if SDM can't find any data, it means this item hasn't been saved yet, so save it.
+                sdm.Save(dataToSave, m_GUID); //if SDM can't find any data, it means this item hasn't been saved yet, so save it. */
             }
         }
 
@@ -172,8 +173,8 @@ namespace FrozenFood
             {
                 if (!loadCheck)
                 {
-                    LoadOrInitData();
                     loadCheck = true;
+                    LoadOrInitData();
                 }
 
                 //Sodas explode after being frozen for some time
@@ -204,6 +205,7 @@ namespace FrozenFood
 
         public void Serialize()
         {
+
             SaveDataManager sdm = Implementation.sdm;
 
             FrozenFoodSaveDataProxy sdp = new FrozenFoodSaveDataProxy();
@@ -214,10 +216,7 @@ namespace FrozenFood
 
             if(m_GearItem.name.ToLowerInvariant().Contains("soda")) sdp.m_TimeSodaBeenFrozen = m_TimeSodaBeenFrozen;
 
-            if (!IsInBackpack())
-            {
-                sdp.m_IsInBackpack = false;
-
+           
                 if (IsNearFire())
                 {
                     Fire closestFire = GameManager.GetFireManagerComponent().GetClosestFire(this.gameObject.transform.position);
@@ -233,13 +232,6 @@ namespace FrozenFood
                 {
                     sdp.m_ActualTemperature = GetCurrentAirTemp();
                 }
-            }
-            else
-            {
-                sdp.m_IsInBackpack = true;
-            }
-
-
 
             string dataToSave = JsonSerializer.Serialize(sdp); //instance in json format to save with
             sdm.Save(dataToSave, m_GUID);
