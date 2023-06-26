@@ -76,6 +76,7 @@ namespace FrozenFood.Patches
                                 __instance.UpdateAndEnableTopRightStatus(__instance.m_TopRightStatusLabel.text, __instance.m_FrozenStatusIcon, __instance.m_FrozenStatusColor);
 
                                 //I know how messy this is. Don't judge pls
+                                __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(10).gameObject.SetActive(false);
                                 __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(5).gameObject.SetActive(false);
                                 __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(6).gameObject.SetActive(false);
                                 __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(7).gameObject.SetActive(false);
@@ -86,9 +87,19 @@ namespace FrozenFood.Patches
                         }
                         else return;
                     }
+                    else
+                    {
+                        __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(10).gameObject.SetActive(false);
+                        __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(5).gameObject.SetActive(false);
+                        __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(6).gameObject.SetActive(false);
+                        __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(7).gameObject.SetActive(false);
+                        __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(8).gameObject.SetActive(false);
+                        __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(9).gameObject.SetActive(false);
+                    }
                 }
                 else if (gi.m_ClothingItem)
                 {
+                    __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(10).gameObject.SetActive(true);
                     __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(5).gameObject.SetActive(true);
                     __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(6).gameObject.SetActive(true);
                     __instance.gameObject.transform.GetChild(3).gameObject.transform.GetChild(7).gameObject.SetActive(true);
@@ -112,12 +123,12 @@ namespace FrozenFood.Patches
 
                 if (__instance.m_Gear.m_FoodItem)
                 {
-
                     if (__instance.m_Gear.m_FoodItem.IsHot()) return;
                     else
                     {
-
                         MelonCoroutines.Start(EnableColdSprite(hud));   
+
+                        if(__instance.m_Gear.gameObject.GetComponent<FrozenFood>() == null) return;
 
                         if (__instance.m_Gear.gameObject.GetComponent<FrozenFood>().GetPercentFrozen() > 1f)
                         {

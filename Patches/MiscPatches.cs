@@ -89,6 +89,9 @@ namespace FrozenFood.Patches
 
                 if (component.m_FoodItem)
                 {
+
+                    if (component.GetComponent<FrozenFood>() == null) return;
+
                     component.GetComponent<FrozenFood>().Dropped();
                 }
             }
