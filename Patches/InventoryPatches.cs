@@ -194,11 +194,12 @@ namespace FrozenFood.Patches
                 Color FrozenColour = new Color(0, 0.844f, 1, 1);
 
                 //update container side
-                for (var i = 0; i < __instance.m_FilteredContainerList.Count; i++)
+                for (var i = 0; i < ui.m_ContainerTableItems.Count; i++)
                 {
-                    if (__instance.m_FilteredContainerList[i].m_FoodItem)
+                    GearItem gi = ui.m_ContainerTableItems[i].m_GearItem;
+                    if (gi != null && gi.m_FoodItem)
                     {
-                        FrozenFood ff = __instance.m_FilteredContainerList[i].GetComponent<FrozenFood>();
+                        FrozenFood ff = gi.GetComponent<FrozenFood>();
                         if (ff != null && ff.IsFrozen())
                         {
                             ui.m_ContainerTableItems[i].m_NotificationFlag.SetActive(true);
@@ -217,11 +218,14 @@ namespace FrozenFood.Patches
                 }
 
                 //update inventory side
-                for (var i = 0; i < __instance.m_FilteredInventoryList.Count; i++)
+                for (var i = 0; i < ui.m_InventoryTableItems.Count; i++)
                 {
-                    if (__instance.m_FilteredInventoryList[i].m_FoodItem)
+
+                    GearItem gi = ui.m_InventoryTableItems[i].m_GearItem;
+
+                    if (gi != null && gi.m_FoodItem)
                     {
-                        FrozenFood ff = __instance.m_FilteredInventoryList[i].m_FoodItem.GetComponent<FrozenFood>();
+                        FrozenFood ff = gi.GetComponent<FrozenFood>();
                         if (ff != null && ff.IsFrozen())
                         {
                             ui.m_InventoryTableItems[i].m_NotificationFlag.SetActive(true);
