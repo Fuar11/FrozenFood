@@ -8,6 +8,7 @@ using HarmonyLib;
 using MelonLoader;
 using UnityEngine;
 using System.Collections;
+using static Il2Cpp.ak.wwise;
 
 namespace FrozenFood.Patches
 {
@@ -180,5 +181,67 @@ namespace FrozenFood.Patches
             }
 
         }
+
+        [HarmonyPatch(typeof(Panel_Container), nameof(Panel_Container.Update))]
+
+        public class ContainerItemViewUpdate
+        {
+
+            public static void Postfix(Panel_Container __instance)
+            {
+
+                ContainerUI ui = __instance.m_ContainerUIComponent;
+                Color FrozenColour = new Color(0, 0.844f, 1, 1);
+
+                //update container side
+                for (var i = 0; i < __instance.m_FilteredContainerList.Count; i++)
+                {
+                    if (__instance.m_FilteredContainerList[i].m_FoodItem)
+                    {
+                        FrozenFood ff = __instance.m_FilteredContainerList[i].GetComponent<FrozenFood>();
+                        if (ff != null && ff.IsFrozen())
+                        {
+                            ui.m_ContainerTableItems[i].m_NotificationFlag.SetActive(true);
+                            ui.m_ContainerTableItems[i].m_NotificationFlag.GetComponent<UISprite>().spriteName = "ico_HUD_cold";
+                            ui.m_ContainerTableItems[i].m_NotificationFlag.GetComponent<UISprite>().color = FrozenColour;
+                        }
+                        else
+                        {
+                            ui.m_ContainerTableItems[i].m_NotificationFlag.SetActive(false);
+                        }
+                    }
+                    else
+                    {
+                        ui.m_ContainerTableItems[i].m_NotificationFlag.SetActive(false);
+                    }
+                }
+
+                //update inventory side
+                for (var i = 0; i < __instance.m_FilteredInventoryList.Count; i++)
+                {
+                    if (__instance.m_FilteredInventoryList[i].m_FoodItem)
+                    {
+                        FrozenFood ff = __instance.m_FilteredInventoryList[i].m_FoodItem.GetComponent<FrozenFood>();
+                        if (ff != null && ff.IsFrozen())
+                        {
+                            ui.m_InventoryTableItems[i].m_NotificationFlag.SetActive(true);
+                            ui.m_InventoryTableItems[i].m_NotificationFlag.GetComponent<UISprite>().spriteName = "ico_HUD_cold";
+                            ui.m_InventoryTableItems[i].m_NotificationFlag.GetComponent<UISprite>().color = FrozenColour;
+                        }
+                        else
+                        {
+                            ui.m_InventoryTableItems[i].m_NotificationFlag.SetActive(false);
+                        }
+                    }
+                    else
+                    {
+                        ui.m_InventoryTableItems[i].m_NotificationFlag.SetActive(false);
+                    }
+                }
+
+            }
+
+        }
+
     }
 }

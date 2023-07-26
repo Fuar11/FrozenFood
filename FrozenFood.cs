@@ -270,7 +270,11 @@ namespace FrozenFood
         {
 
             //if item is hot, do not freeze
-            if (m_FoodItem.IsHot()) return;
+            if (m_FoodItem.IsHot())
+            {
+                m_PercentFrozen = 0;
+                return;
+            }
 
             if (m_PercentFrozen < 100f)
             {
