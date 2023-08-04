@@ -11,6 +11,7 @@ using UnityEngine;
 using System.Text.Json;
 using static Il2CppSystem.Globalization.TimeSpanParse;
 using Random = System.Random;
+using Il2CppXGamingRuntime.Interop;
 
 namespace FrozenFood
 {
@@ -217,7 +218,7 @@ namespace FrozenFood
             if(m_GearItem.name.ToLowerInvariant().Contains("soda")) sdp.m_TimeSodaBeenFrozen = m_TimeSodaBeenFrozen;
 
            
-                if (IsNearFire())
+                if (IsNearFire(10))
                 {
                     Fire closestFire = GameManager.GetFireManagerComponent().GetClosestFire(this.gameObject.transform.position);
 
@@ -332,23 +333,14 @@ namespace FrozenFood
             else if (foodType == "Wet") TTF += 30;
             else TTF += 25;
 
-            if (Temp < 0 && Temp > -10)
-            {
-                if (GameManager.GetWeatherComponent().IsIndoorEnvironment())
-                {
-                    TemperatureMultiplier = 1.05f;
-                }
-                else
-                {
-                    TemperatureMultiplier = 1.2f;
-                }
-            }
-            else if (Temp < -10 && Temp > -20) TemperatureMultiplier = 1.5f;
-            else if (Temp < -20 && Temp > -30) TemperatureMultiplier = 1.7f;
-            else if (Temp < -30) TemperatureMultiplier = 2f;
-            else TemperatureMultiplier = 1f;
+            TemperatureMultiplier = 1f + (Temp / (-60f)) * 2f;
 
             TTF *= TemperatureMultiplier;
+
+            if (GameManager.GetWeatherComponent().IsIndoorEnvironment())
+            {
+                TTF /= 2f;
+            }
 
             if (IsInBackpack())
             {
@@ -384,16 +376,24 @@ namespace FrozenFood
             else if (foodType == "Wet") TTT += 30;
             else TTT += 40;
 
-            if (Temp > 0 && Temp < 10) TemperatureMultiplier = 1.2f;
-            else if (Temp > 10 && Temp < 20) TemperatureMultiplier = 1.5f;
-            else if (Temp > 20 && Temp < 30) TemperatureMultiplier = 1.7f;
-            else if (Temp > 30) TemperatureMultiplier = 2f;
-            else if (Temp > 50) TemperatureMultiplier = 2.5f;
-            else if (Temp > 80) TemperatureMultiplier = 2.85f;
-            else if (Temp > 100) TemperatureMultiplier = 3f;
-            else TemperatureMultiplier = 1f;
+            bool thawBonus = false;
+
+            if (IsNearFire(1.3f) && !IsInBackpack())
+            {
+                Fire closestFire = GameManager.GetFireManagerComponent().GetClosestFire(this.gameObject.transform.position);
+
+                if (GameManager.GetWeatherComponent().GetCurrentTemperatureWithoutHeatSources() > -20f && closestFire.m_HeatSource.m_TempIncrease >= 10f)
+                {
+                    Temp = closestFire.m_HeatSource.m_TempIncrease;
+                    thawBonus = true;
+                }
+            }
+
+            TemperatureMultiplier = 1f + (Temp / (-60f)) * 2f;
 
             TTT = TTT * TemperatureMultiplier;
+
+            if(thawBonus) TTT *= 4f;
 
             if (IsInBackpack())
             {
@@ -405,7 +405,6 @@ namespace FrozenFood
             }
 
             return TTT;
-
         }
 
         public string GetFoodType(string item)
@@ -415,9 +414,9 @@ namespace FrozenFood
             else return "Mid";
         }
 
-        private bool IsNearFire()
+        private bool IsNearFire(float distance)
         {
-            return GameManager.GetFireManagerComponent().GetDistanceToClosestFire(this.transform.position) < GameManager.GetBodyHarvestManagerComponent().m_RadiusToThawFromFire;
+            return GameManager.GetFireManagerComponent().GetDistanceToClosestFire(this.transform.position) < distance;
         }
         public bool IsAirTempPositive()
         {
