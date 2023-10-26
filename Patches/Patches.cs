@@ -92,8 +92,13 @@ namespace FrozenFood.Patches
             {
                 GameObject food = __instance.gameObject;
                 if (food.name.ToLowerInvariant().Contains("cattail") || food.name.ToLowerInvariant().Contains("acorn") || food.name.ToLowerInvariant().Contains("cup")) return;
-                Guid uniqueId = Guid.NewGuid();
-                ObjectGuid.MaybeAttachObjectGuidAndRegister(food, uniqueId.ToString());
+
+                if (!food.GetComponent<ObjectGuid>())
+                {
+                    Guid uniqueId = Guid.NewGuid();
+                    ObjectGuid.MaybeAttachObjectGuidAndRegister(food, uniqueId.ToString());
+                }
+                
                 food.AddComponent<FrozenFood>();
             }
 

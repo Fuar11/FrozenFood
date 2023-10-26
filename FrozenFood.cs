@@ -244,13 +244,11 @@ namespace FrozenFood
             if (IsAirTempPositive() || nearFireOverride)
             {
                 m_ThawPercentPerHour = CalculateTimeToThaw(nearFireOverride);
-                MelonLogger.Msg("Item: {0} is thawing at: {1} with {2}", m_GearItem.name, m_PercentFrozen, m_ThawPercentPerHour);
                 Thaw(m_ThawPercentPerHour * numHoursDelta);
             }
             else
             {
                 m_FreezePercentPerHour = CalculateTimeToFreeze();
-                MelonLogger.Msg("Item: {0} is freezing at: {1} with {2}", m_GearItem.name, m_PercentFrozen, m_FreezePercentPerHour);
                 Freeze(m_FreezePercentPerHour * numHoursDelta);
             }
 
@@ -299,7 +297,6 @@ namespace FrozenFood
 
         public void ForceFreeze(float amount)
         {
-            MelonLogger.Msg("Force freezing {0}", m_GearItem.name);
 
             m_PercentFrozen += amount;
             m_FoodItem.m_HeatPercent = 0f;
