@@ -155,15 +155,6 @@ namespace FrozenFood
                     else m_PercentFrozen = 100f; //if it's not in your backpack, it's been outside for a while so it's frozen
                 }
                 else m_PercentFrozen = 0f;
-
-                //I don't even know if we need to save here vvv
-
-                /*
-                FrozenFoodSaveDataProxy sdp = new FrozenFoodSaveDataProxy();
-                sdp.m_PercentFrozen = m_PercentFrozen;
-
-                string dataToSave = JsonSerializer.Serialize(sdp); //instance in json format to save with
-                sdm.Save(dataToSave, m_GUID); //if SDM can't find any data, it means this item hasn't been saved yet, so save it. */
             }
         }
 
@@ -197,7 +188,8 @@ namespace FrozenFood
                 BlowUpSoda();
 
                 float tODHours = GameManager.GetTimeOfDayComponent().GetTODHours(Time.deltaTime);
-                DoThawOrFreeze(tODHours);
+
+                DoThawOrFreeze(tODHours, IsNearFire(10) && GetNearestFireTemp(10) > 0);
 
                 //texture stuff happens here
 
@@ -377,18 +369,26 @@ namespace FrozenFood
             else if (foodType == "Wet") TTT += 30;
             else TTT += 40;
 
-            bool thawBonus = false;
+            bool thawBonus = false; 
 
-            if (IsNearFire(1.3f) && !IsInBackpack())
+            if (IsNearFire(10f) && !IsInBackpack())
             {
-                Fire closestFire = GameManager.GetFireManagerComponent().GetClosestFire(this.gameObject.transform.position);
+                float fireTemp = GetNearestFireTemp(10f);
 
-                if (GameManager.GetWeatherComponent().GetCurrentTemperatureWithoutHeatSources() > -20f && closestFire.m_HeatSource.m_TempIncrease >= 10f)
+                if (IsNearFire(1.3f))
                 {
-                    Temp = closestFire.m_HeatSource.m_TempIncrease;
-                    thawBonus = true;
+                    if (GameManager.GetWeatherComponent().GetCurrentTemperatureWithoutHeatSources() > -20f && fireTemp >= 10f)
+                    {
+                        Temp = fireTemp;
+                        thawBonus = true;
+                    }
+                }
+                else //if player isn't near the food item, the temperature is taken from the air temperature (since it doesn't vary much from fire distance to player distance) and the fire temperature
+                {
+                    Temp += fireTemp;
                 }
             }
+          
 
             TemperatureMultiplier = 1f + (Temp / (60f)) * 2f;
 
@@ -419,6 +419,13 @@ namespace FrozenFood
         {
             return GameManager.GetFireManagerComponent().GetDistanceToClosestFire(this.transform.position) < distance;
         }
+
+        private float GetNearestFireTemp(float distance)
+        {
+                Fire closestFire = GameManager.GetFireManagerComponent().GetClosestFire(this.gameObject.transform.position);
+                return closestFire.m_HeatSource.m_TempIncrease;
+        }
+
         public bool IsAirTempPositive()
         {
             return (GameManager.GetWeatherComponent().GetCurrentTemperature() > 0) ? true : false;
