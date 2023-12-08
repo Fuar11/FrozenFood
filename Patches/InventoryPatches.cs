@@ -133,7 +133,7 @@ namespace FrozenFood.Patches
 
                         if(__instance.m_Gear.gameObject.GetComponent<FrozenFood>() == null) return;
 
-                        if (__instance.m_Gear.gameObject.GetComponent<FrozenFood>().GetPercentFrozen() > 1f)
+                        if (__instance.m_Gear.gameObject.GetComponent<FrozenFood>().GetPercentFrozen() >= 1f)
                         {
                             SetFrozenSprite();
                             string str = __instance.m_Gear.gameObject.GetComponent<FrozenFood>().GetFrozenOnlyString();
@@ -361,6 +361,44 @@ namespace FrozenFood.Patches
             }
 
         }
+
+       
+
+        [HarmonyPatch(typeof(Panel_HUD), nameof(Panel_HUD.SetHoverText))]
+
+        public class FrozenHoverText
+        {
+            public static void Prefix(ref string hoverText, ref GameObject itemUnderCrosshairs, ref HoverTextState textState, Panel_HUD __instance)
+            {
+
+                if (GameManager.m_ActiveScene.ToLowerInvariant().Contains("menu") || GameManager.m_ActiveScene.ToLowerInvariant().Contains("boot")) return;
+                if (hoverText == null || itemUnderCrosshairs == null) return;
+
+                string textToConcat = "";
+                Color frozenColour = new Color(0, 0.844f, 1, 1);
+
+                FrozenFood ff = itemUnderCrosshairs.GetComponent<FrozenFood>();
+                if (ff != null)
+                {
+
+                    textToConcat = ff.GetFrozenOnlyString();
+
+                    if (ff.GetPercentFrozen() >= 1f)
+                    {
+                        __instance.m_Label_SubText.color = frozenColour;
+
+                        if (hoverText.Contains("(Cold)"))
+                        {
+                            hoverText = hoverText.Replace("Cold", textToConcat);
+                        }
+                        else hoverText += ("\n" + textToConcat);
+                    }
+                }
+            }
+        }
+
+       
+
 
     }
 }
