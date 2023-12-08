@@ -9,6 +9,8 @@ using MelonLoader;
 using UnityEngine;
 using System.Collections;
 using static Il2Cpp.ak.wwise;
+using FrozenFood.Utils;
+using Il2CppTLD.SaveState;
 
 namespace FrozenFood.Patches
 {
@@ -243,6 +245,119 @@ namespace FrozenFood.Patches
                     }
                 }
 
+            }
+
+        }
+
+        [HarmonyPatch(typeof(Panel_ActionsRadial), nameof(Panel_ActionsRadial.UpdateStackStatus))]
+
+        public class RadialFoodFrozenIndicator
+        {
+
+            public static bool Prefix()
+            {
+                return false;
+            }
+
+            public static void Postfix(ref GearItem gi, Panel_ActionsRadial __instance)
+            {
+
+                __instance.m_StackStatusLabel.gameObject.SetActive(false);
+               __instance.m_StackStatusIcon.gameObject.SetActive(false);
+
+                MeasurementUnits u = new MeasurementUnits();
+
+                try
+                {
+                    if (InterfaceManager.GetPanel<Panel_OptionsMenu>().m_UnitsPopupList.m_SelectedItem.ToLowerInvariant().Contains("metric")) u = MeasurementUnits.Metric;
+                    else u = MeasurementUnits.Imperial;
+                }
+                catch (Exception e)
+                {
+                //if i put a log here it will spam the console
+                }
+
+
+                if (gi.m_StoneItem && gi.m_StackableItem)
+                {
+                    __instance.UpdateAndEnableStackStatus(GameManager.GetInventoryComponent().GetNumStones().ToString(), gi.m_StackableItem.m_StackSpriteName, __instance.m_StackStatusColor);
+                }
+                else if (gi.m_FoodItem)
+                {
+
+                    FrozenFood ff = gi.m_FoodItem.gameObject.GetComponent<FrozenFood>();
+                    string sprite = InterfaceManager.GetPanel<Panel_HUD>().m_UnitsSprite_Calories;
+                    Color colour = __instance.m_FoodColdStatusColor;
+
+                    if (ff.IsFrozen())
+                    {
+                        sprite = "ico_HUD_cold";
+                        colour = new Color(0, 0.844f, 1, 1);
+                    }
+
+
+                    if (gi.m_FoodItem.IsHot() && gi.m_FoodItem.m_HeatedWhenCooked)
+                    {
+                        __instance.UpdateAndEnableStackStatus(gi.m_FoodItem.m_CaloriesRemaining.ToString("F0"), InterfaceManager.GetPanel<Panel_HUD>().m_UnitsSprite_Calories, __instance.m_FoodHotStatusColor);
+                    }
+                    else if (!gi.m_FoodItem.IsHot() && gi.m_FoodItem.m_HeatedWhenCooked)
+                    {
+                        __instance.UpdateAndEnableStackStatus(gi.m_FoodItem.m_CaloriesRemaining.ToString("F0"), sprite, colour);
+                    }
+                    else
+                    {
+                        __instance.UpdateAndEnableStackStatus(gi.m_FoodItem.m_CaloriesRemaining.ToString("F0"), sprite, colour);
+                    }
+                }
+                else if (gi.m_GunItem)
+                {
+                    __instance.UpdateAndEnableStackStatus(gi.m_GunItem.NumRoundsInClip().ToString(), gi.m_GunItem.m_AmmoSpriteName, __instance.m_StackStatusColor);
+                }
+                else if (gi.m_FlareItem)
+                {
+                    int numFlares = GameManager.GetInventoryComponent().GetNumFlares(gi.m_FlareItem.m_Type);
+                    if (numFlares > 1)
+                    {
+                        __instance.UpdateAndEnableStackStatus(numFlares.ToString(), gi.m_FlareItem.m_RadialSpriteName, __instance.m_StackStatusColor);
+                    }
+                }
+                else if (gi.m_TorchItem)
+                {
+                    int numTorches = GameManager.GetInventoryComponent().GetNumTorches();
+                    if (numTorches > 1)
+                    {
+                        __instance.UpdateAndEnableStackStatus(numTorches.ToString(), gi.m_TorchItem.m_RadialSpriteName, __instance.m_StackStatusColor);
+                    }
+                }
+                else if (gi.m_StackableItem && gi.m_StackableItem.m_Units > 1)
+                {
+                    __instance.UpdateAndEnableStackStatus(gi.m_StackableItem.m_Units.ToString(), gi.m_StackableItem.m_StackSpriteName, __instance.m_StackStatusColor);
+                }
+                else if (gi.m_WaterSupply)
+                {
+
+                    string liquidQuantityStringWithUnitsNoOunces = Il2Cpp.Utils.GetLiquidQuantityStringWithUnitsNoOunces(u, gi.m_WaterSupply.m_VolumeInLiters);
+
+                    __instance.UpdateAndEnableStackStatus(liquidQuantityStringWithUnitsNoOunces, __instance.m_LiquidIcon, __instance.m_StackStatusColor);
+                }
+                else if (gi.m_KeroseneLampItem)
+                {
+                    string liquidQuantityStringWithUnitsNoOunces2 = Il2Cpp.Utils.GetLiquidQuantityStringWithUnitsNoOunces(u, gi.m_KeroseneLampItem.m_CurrentFuelLiters);
+                    __instance.UpdateAndEnableStackStatus(liquidQuantityStringWithUnitsNoOunces2, __instance.m_LampFuelIcon, __instance.m_StackStatusColor);
+                }
+                else if (gi.m_LiquidItem)
+                {
+                    string liquidQuantityStringWithUnitsNoOunces3 = Il2Cpp.Utils.GetLiquidQuantityStringWithUnitsNoOunces(u, gi.m_LiquidItem.m_LiquidLiters);
+                    __instance.UpdateAndEnableStackStatus(liquidQuantityStringWithUnitsNoOunces3, __instance.m_LiquidIcon, __instance.m_StackStatusColor);
+                }
+                else if (gi.m_BowItem)
+                {
+                    __instance.UpdateAndEnableStackStatus(gi.m_BowItem.GetNumAllArrowsInInventory().ToString(), "ico_ammo_arrow", __instance.m_StackStatusColor);
+                }
+                else if (gi.m_NoiseMakerItem)
+                {
+                    __instance.UpdateAndEnableStackStatus(GameManager.GetInventoryComponent().GetNumNoiseMakers().ToString(), gi.m_NoiseMakerItem.m_RadialSpriteName, __instance.m_StackStatusColor);
+                }
             }
 
         }
