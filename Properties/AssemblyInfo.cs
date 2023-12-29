@@ -15,7 +15,7 @@ using System.Reflection;
 
 internal static class BuildInfo
 {
-	internal const string ModName = "Frozen Foods";
+	internal const string ModName = "Frozen Food";
 	internal const string ModAuthor = "Fuar";
 	/// <summary>
 	/// Version numbers in C# are a set of 1 to 4 positive integers separated by periods.
