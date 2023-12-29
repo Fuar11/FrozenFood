@@ -371,7 +371,7 @@ namespace FrozenFood.Patches
             public static void Prefix(ref string hoverText, ref GameObject itemUnderCrosshairs, ref HoverTextState textState, Panel_HUD __instance)
             {
 
-                if (GameManager.m_ActiveScene.ToLowerInvariant().Contains("menu") || GameManager.m_ActiveScene.ToLowerInvariant().Contains("boot")) return;
+                if (GameManager.IsMainMenuActive()) return;
                 if (hoverText == null || itemUnderCrosshairs == null) return;
 
                 string textToConcat = "";
