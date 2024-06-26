@@ -7,6 +7,7 @@ using UnityEngine;
 using HarmonyLib;
 using MelonLoader;
 using Il2Cpp;
+using FrozenFood.Utils;
 
 namespace FrozenFood.Patches
 {
@@ -26,10 +27,7 @@ namespace FrozenFood.Patches
                     float percentFrozen = __instance.gameObject.GetComponent<FrozenFood>().GetPercentFrozen();
                     float multiplier = 1f;
 
-                    if(percentFrozen >= 50)
-                    {
-                        multiplier = percentFrozen / 50;
-                    }
+                    multiplier = UtilityFunctions.MapPercentageToVariable(percentFrozen, 1f, 1.5f);
 
                     __result *= multiplier;
                 }

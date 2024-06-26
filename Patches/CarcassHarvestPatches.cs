@@ -10,6 +10,7 @@ using UnityEngine;
 using Il2CppTLD.Stats;
 using Il2CppTLD.SaveState;
 using Unity.VisualScripting;
+using Il2CppTLD.IntBackedUnit;
 
 namespace FrozenFood.Patches
 {
@@ -31,11 +32,11 @@ namespace FrozenFood.Patches
 
                 GameObject meatPrefab = __instance.m_BodyHarvest.m_MeatPrefab;
                 GearItem component = meatPrefab.GetComponent<GearItem>();
-                float num = __instance.m_MenuItem_Meat.m_HarvestAmount;
+                float num = __instance.m_MenuItem_Meat.HarvestAmount.m_Units;
                 while ((double)num > 0.01)
                 {
 
-                    float num2 = num / component.GetSingleItemWeightKG();
+                    float num2 = num / component.GetSingleItemWeightKG().m_Units;
 
                     GearItem gearItem = GameManager.GetPlayerManagerComponent().InstantiateItemInPlayerInventory(component, 1, 86f);
 
@@ -49,7 +50,7 @@ namespace FrozenFood.Patches
 
                     
 
-                    num -= component.GetSingleItemWeightKG();
+                    num -= component.GetSingleItemWeightKG().m_Units;
                     num = Mathf.Clamp(num, 0f, float.PositiveInfinity);
                     if (gearItem)
                     {
@@ -71,25 +72,11 @@ namespace FrozenFood.Patches
                     }
                 }
 
-                __instance.m_BodyHarvest.m_MeatAvailableKG -= __instance.m_MenuItem_Meat.m_HarvestAmount;
+                __instance.m_BodyHarvest.m_MeatAvailableKG = new ItemWeight(__instance.m_BodyHarvest.m_MeatAvailableKG.m_Units - __instance.m_MenuItem_Meat.HarvestAmount.m_Units);
                 __instance.m_BodyHarvest.MaybeRoundMeatAvailableToZero();
-                if (__instance.m_MenuItem_Meat.m_HarvestAmount > 0f)
+                if (__instance.m_MenuItem_Meat.HarvestAmount.m_Units > 0f)
                 {
-
-                    MeasurementUnits u = new MeasurementUnits();
-
-                    try
-                    {
-                        if (InterfaceManager.GetPanel<Panel_OptionsMenu>().m_UnitsPopupList.m_SelectedItem.ToLowerInvariant().Contains("metric")) u = MeasurementUnits.Metric;
-                        else u = MeasurementUnits.Imperial;
-                    }
-                    catch(Exception e)
-                    {
-                        MelonLogger.Error("Cannot retrieve options from settings so this is here for now");
-                    }
-                  
-
-                    string weightOneDecimalPlaceWithUnitsString = Il2Cpp.Utils.GetWeightOneDecimalPlaceWithUnitsString(u, __instance.m_MenuItem_Meat.m_HarvestAmount);
+                    string weightOneDecimalPlaceWithUnitsString = IntBackedUnitExtensions.ToFormattedStringWithUnits(__instance.m_MenuItem_Meat.HarvestAmount, 1);
                     string message = component.name + " (" + weightOneDecimalPlaceWithUnitsString + ")";
                     GearMessage.AddMessage(component.name, Localization.Get("GAMEPLAY_Harvested"), message);
                 }

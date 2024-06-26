@@ -9,6 +9,8 @@ using Il2Cpp;
 using HarmonyLib;
 using Il2CppTLD.PDID;
 using Il2CppTLD.Gear;
+using Il2CppSystem;
+using Guid = System.Guid;
 
 namespace FrozenFood.Patches
 {
@@ -91,7 +93,7 @@ namespace FrozenFood.Patches
             private static void Postfix(FoodItem __instance)
             {
                 GameObject food = __instance.gameObject;
-                if (food.name.ToLowerInvariant().Contains("cattail") || food.name.ToLowerInvariant().Contains("acorn") || food.name.ToLowerInvariant().Contains("cup") || food.name.ToLowerInvariant().Contains("burdock") || food.name.ToLowerInvariant().Contains("burdock")) return;
+                if (food.name.ToLowerInvariant().Contains("cattail") || food.name.ToLowerInvariant().Contains("acorn") || food.name.ToLowerInvariant().Contains("coffee") || food.name.ToLowerInvariant().Contains("birch") || food.name.ToLowerInvariant().Contains("burdock") || food.name.ToLowerInvariant().Contains("rose")) return;
 
                 if (!food.GetComponent<ObjectGuid>())
                 {

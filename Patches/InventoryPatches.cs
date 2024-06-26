@@ -249,6 +249,7 @@ namespace FrozenFood.Patches
 
         }
 
+        
         [HarmonyPatch(typeof(Panel_ActionsRadial), nameof(Panel_ActionsRadial.UpdateStackStatus))]
 
         public class RadialFoodFrozenIndicator
@@ -336,18 +337,18 @@ namespace FrozenFood.Patches
                 else if (gi.m_WaterSupply)
                 {
 
-                    string liquidQuantityStringWithUnitsNoOunces = Il2Cpp.Utils.GetLiquidQuantityStringWithUnitsNoOunces(u, gi.m_WaterSupply.m_VolumeInLiters);
+                    string liquidQuantityStringWithUnitsNoOunces = IntBackedUnitExtensions.ToFormattedStringNoOunces(gi.m_WaterSupply.m_VolumeInLiters);
 
                     __instance.UpdateAndEnableStackStatus(liquidQuantityStringWithUnitsNoOunces, __instance.m_LiquidIcon, __instance.m_StackStatusColor);
                 }
                 else if (gi.m_KeroseneLampItem)
                 {
-                    string liquidQuantityStringWithUnitsNoOunces2 = Il2Cpp.Utils.GetLiquidQuantityStringWithUnitsNoOunces(u, gi.m_KeroseneLampItem.m_CurrentFuelLiters);
+                    string liquidQuantityStringWithUnitsNoOunces2 = IntBackedUnitExtensions.ToFormattedStringNoOunces(gi.m_KeroseneLampItem.m_CurrentFuelLiters);
                     __instance.UpdateAndEnableStackStatus(liquidQuantityStringWithUnitsNoOunces2, __instance.m_LampFuelIcon, __instance.m_StackStatusColor);
                 }
                 else if (gi.m_LiquidItem)
                 {
-                    string liquidQuantityStringWithUnitsNoOunces3 = Il2Cpp.Utils.GetLiquidQuantityStringWithUnitsNoOunces(u, gi.m_LiquidItem.m_LiquidLiters);
+                    string liquidQuantityStringWithUnitsNoOunces3 = IntBackedUnitExtensions.ToFormattedStringNoOunces(gi.m_LiquidItem.m_Liquid);
                     __instance.UpdateAndEnableStackStatus(liquidQuantityStringWithUnitsNoOunces3, __instance.m_LiquidIcon, __instance.m_StackStatusColor);
                 }
                 else if (gi.m_BowItem)
@@ -361,7 +362,7 @@ namespace FrozenFood.Patches
             }
 
         }
-
+        
        
 
         [HarmonyPatch(typeof(Panel_HUD), nameof(Panel_HUD.SetHoverText))]

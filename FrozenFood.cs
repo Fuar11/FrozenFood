@@ -27,7 +27,7 @@ namespace FrozenFood
 
         private FoodItem m_FoodItem = new FoodItem();
 
-        public string m_GUID;
+        public ObjectGuid m_GUID;
 
         private bool loadCheck;
 
@@ -67,7 +67,7 @@ namespace FrozenFood
 
             SaveDataManager sdm = Implementation.sdm;
 
-            m_GUID = this.gameObject.GetComponent<ObjectGuid>().PDID;
+            m_GUID = base.GetComponent<ObjectGuid>();
 
             /*
             MelonLogger.Msg("Item ID is: {0}", this.gameObject.name);
@@ -76,15 +76,19 @@ namespace FrozenFood
 
             //check to see if object already has component data on it
 
-            string loadedData = sdm.LoadFrozenFoodData(m_GUID);
+            string loadedData = sdm.LoadFrozenFoodData(m_GUID.PDID);
             FrozenFoodSaveDataProxy? ldp;
 
             if (loadedData != null)
             {
+
                 ldp = JsonSerializer.Deserialize<FrozenFoodSaveDataProxy>(loadedData);
 
                 if (ldp != null)
                 {
+
+
+                    /**
                     if (Patches.Patches.lastScene.ToLowerInvariant().Contains("menu"))
                     {
                         m_PercentFrozen = ldp.m_PercentFrozenAtLastLoad;
@@ -94,7 +98,9 @@ namespace FrozenFood
                         m_PercentFrozen = ldp.m_PercentFrozen;
                         m_PercentFrozenAtLastLoad = ldp.m_PercentFrozen;
                     }
+                    **/
 
+                    m_PercentFrozen = ldp.m_PercentFrozen;
                     m_ForceFrozen = ldp.m_ForceFrozen;
 
                     if (m_GearItem.name.ToLowerInvariant().Contains("soda")) m_TimeSodaBeenFrozen = ldp.m_TimeSodaBeenFrozen;
@@ -131,7 +137,6 @@ namespace FrozenFood
 
                 if (harvestCheck)
                 {
-                    MelonLogger.Msg("Item is coming from carcass, setting frozen amount accordingly");
                     m_PercentFrozen = m_PercentFrozenFromHarvest;
                     harvestCheck = false;
                     return;
@@ -207,6 +212,8 @@ namespace FrozenFood
             sdp.m_HoursPlayedAtTimeOfSave = GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused();
             sdp.m_ForceFrozen = m_ForceFrozen;
 
+            MelonLogger.Msg("Saving {0} with percent frozen {1}", m_GUID.PDID, sdp.m_PercentFrozenAtLastLoad);
+
             if(m_GearItem.name.ToLowerInvariant().Contains("soda")) sdp.m_TimeSodaBeenFrozen = m_TimeSodaBeenFrozen;
 
            
@@ -227,7 +234,7 @@ namespace FrozenFood
                 }
 
             string dataToSave = JsonSerializer.Serialize(sdp); //instance in json format to save with
-            sdm.Save(dataToSave, m_GUID);
+            sdm.Save(dataToSave, m_GUID.PDID);
         }
 
         private void DoThawOrFreeze(float numHoursDelta, bool nearFireOverride = false)
@@ -332,7 +339,7 @@ namespace FrozenFood
 
             if (GameManager.GetWeatherComponent().IsIndoorEnvironment())
             {
-                TTF /= 2f;
+                TTF /= 3f;
             }
 
             if (IsInBackpack())
@@ -371,15 +378,23 @@ namespace FrozenFood
 
             bool thawBonus = false; 
 
-            if (IsNearFire(10f) && !IsInBackpack())
+            if (IsNearFire(10f) && !IsInBackpack() && !IsInContainer())
             {
                 float fireTemp = GetNearestFireTemp(10f);
 
-                if (IsNearFire(1.3f))
+                if (IsNearFire(1.3f) && !m_GearItem.IsAttachedToPlacePoint())
                 {
-                    if (GameManager.GetWeatherComponent().GetCurrentTemperatureWithoutHeatSources() > -20f && fireTemp >= 10f)
+                    if (GameManager.GetWeatherComponent().GetCurrentTemperatureWithoutHeatSources() > -15f && fireTemp >= 5f)
                     {
                         Temp = fireTemp;
+                        thawBonus = true;
+                    }
+                }
+                else if (m_GearItem.IsAttachedToPlacePoint())
+                {
+                    if(fireTemp >= 10f)
+                    {
+                        Temp = fireTemp + 10f;
                         thawBonus = true;
                     }
                 }
