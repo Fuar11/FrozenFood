@@ -193,7 +193,6 @@ namespace FrozenFood
 
             FrozenFoodSaveDataProxy sdp = new FrozenFoodSaveDataProxy();
             sdp.m_PercentFrozen = m_PercentFrozen;
-            sdp.m_PercentFrozenAtLastLoad = m_PercentFrozenAtLastLoad;
             sdp.m_HoursPlayedAtTimeOfSave = GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused();
             sdp.m_ForceFrozen = m_ForceFrozen;
 
