@@ -41,8 +41,6 @@ namespace FrozenFood
 
         public float m_PercentFrozenFromHarvest;
 
-        private float m_PercentFrozenAtLastLoad;
-
         private Nullable <float> m_TimeSodaBeenFrozen;
 
         private float m_TempToLoadDataWith;
@@ -86,19 +84,6 @@ namespace FrozenFood
 
                 if (ldp != null)
                 {
-
-
-                    /**
-                    if (Patches.Patches.lastScene.ToLowerInvariant().Contains("menu"))
-                    {
-                        m_PercentFrozen = ldp.m_PercentFrozenAtLastLoad;
-                    }
-                    else
-                    {
-                        m_PercentFrozen = ldp.m_PercentFrozen;
-                        m_PercentFrozenAtLastLoad = ldp.m_PercentFrozen;
-                    }
-                    **/
 
                     m_PercentFrozen = ldp.m_PercentFrozen;
                     m_ForceFrozen = ldp.m_ForceFrozen;
@@ -211,8 +196,6 @@ namespace FrozenFood
             sdp.m_PercentFrozenAtLastLoad = m_PercentFrozenAtLastLoad;
             sdp.m_HoursPlayedAtTimeOfSave = GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused();
             sdp.m_ForceFrozen = m_ForceFrozen;
-
-            MelonLogger.Msg("Saving {0} with percent frozen {1}", m_GUID.PDID, sdp.m_PercentFrozenAtLastLoad);
 
             if(m_GearItem.name.ToLowerInvariant().Contains("soda")) sdp.m_TimeSodaBeenFrozen = m_TimeSodaBeenFrozen;
 
@@ -455,7 +438,6 @@ namespace FrozenFood
         {
             if (GameManager.GetTimeOfDayComponent().GetHoursPlayedNotPaused() - m_TimeSodaBeenFrozen >= 6)
             {
-                MelonLogger.Msg("Soda go boom yo!");
                 Destroy(m_GearItem.gameObject);
             }
         }

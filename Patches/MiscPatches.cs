@@ -37,25 +37,6 @@ namespace FrozenFood.Patches
 
         }
 
-        /*
-        [HarmonyPatch(typeof(PlayerManager), "EnterInspectGearMode", new Type[] {typeof (GearItem), typeof(Container), typeof(IceFishingHole), typeof(Harvestable), typeof(CookingPotItem)})]
-        public class CheckFirstInspectClass
-        {
-
-            private static void Postfix(PlayerManager __instance)
-            {
-                if (__instance.m_Gear.m_FoodItem)
-                {
-                    if(__instance.m_Gear.GetComponent<FrozenFood>() != null)
-                    {
-                        __instance.m_Gear.GetComponent<FrozenFood>().OnFirstInspect();
-                    }
-                }
-
-            }
-
-        } */
-
         [HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.AddItemToPlayerInventory))]
 
         public class AddItemToInvClass
