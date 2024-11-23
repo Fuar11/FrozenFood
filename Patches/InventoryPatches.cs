@@ -290,12 +290,14 @@ namespace FrozenFood.Patches
                     string sprite = InterfaceManager.GetPanel<Panel_HUD>().m_UnitsSprite_Calories;
                     Color colour = __instance.m_FoodColdStatusColor;
 
-                    if (ff.IsFrozen())
+                    if (ff is not null)
                     {
-                        sprite = "ico_HUD_cold";
-                        colour = new Color(0, 0.844f, 1, 1);
+                        if (ff.IsFrozen())
+                        {
+                            sprite = "ico_HUD_cold";
+                            colour = new Color(0, 0.844f, 1, 1);
+                        }
                     }
-
 
                     if (gi.m_FoodItem.IsHot() && gi.m_FoodItem.m_HeatedWhenCooked)
                     {

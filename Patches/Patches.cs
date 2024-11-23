@@ -80,7 +80,7 @@ namespace FrozenFood.Patches
             private static void Postfix(FoodItem __instance)
             {
                 GameObject food = __instance.gameObject;
-                if (food.name.ToLowerInvariant().Contains("cattail") || food.name.ToLowerInvariant().Contains("acorn") || food.name.ToLowerInvariant().Contains("coffee") || food.name.ToLowerInvariant().Contains("birch") || food.name.ToLowerInvariant().Contains("burdock") || food.name.ToLowerInvariant().Contains("rose")) return;
+                if (food.name.ToLowerInvariant().Contains("cattail") || food.name.ToLowerInvariant().Contains("acorn") || food.name.ToLowerInvariant().Contains("coffee") || food.name.ToLowerInvariant().Contains("birch") || food.name.ToLowerInvariant().Contains("burdock") || food.name.ToLowerInvariant().Contains("rose") || food.name.ToLowerInvariant().Contains("energy")) return;
 
                 if (!food.GetComponent<ObjectGuid>())
                 {
