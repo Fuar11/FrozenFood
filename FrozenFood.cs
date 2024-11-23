@@ -503,6 +503,10 @@ namespace FrozenFood
             return m_PercentFrozen / 100f;
         }
 
+        public float GetDecayMod()
+        {
+            return 1 + m_PercentFrozen / 100;
+        }
 
     }
 }

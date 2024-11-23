@@ -14,7 +14,7 @@ using Guid = System.Guid;
 
 namespace FrozenFood.Patches
 {
-    internal class Patches
+    internal class PlayerPatches
     {
 
         [HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.CanUseFoodInventoryItem))]
@@ -67,48 +67,26 @@ namespace FrozenFood.Patches
                 }
 
             }
-
-
         }
 
+        [HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.AddItemToPlayerInventory))]
 
-        [HarmonyPatch(typeof(FoodItem), nameof(FoodItem.Awake))]
-
-        public class FoodItem_Awake
+        public class AddItemToInvClass
         {
 
-            private static void Postfix(FoodItem __instance)
+            private static void Postfix(GearItem gi)
             {
-                GameObject food = __instance.gameObject;
-                if (food.name.ToLowerInvariant().Contains("cattail") || food.name.ToLowerInvariant().Contains("acorn") || food.name.ToLowerInvariant().Contains("coffee") || food.name.ToLowerInvariant().Contains("birch") || food.name.ToLowerInvariant().Contains("burdock") || food.name.ToLowerInvariant().Contains("rose") || food.name.ToLowerInvariant().Contains("energy")) return;
 
-                if (!food.GetComponent<ObjectGuid>())
+                if (gi.m_FoodItem)
                 {
-                    Guid uniqueId = Guid.NewGuid();
-                    ObjectGuid.MaybeAttachObjectGuidAndRegister(food, uniqueId.ToString());
+                    if (gi.GetComponent<FrozenFood>() != null)
+                    {
+                        gi.GetComponent<FrozenFood>().PickedUp();
+                    }
                 }
-                
-                food.AddComponent<FrozenFood>();
+
             }
 
         }
-
-        [HarmonyPatch(typeof(FoodItem), nameof(FoodItem.Serialize))]
-
-        public class FrozenFood_Save
-        {
-            private static void Postfix(FoodItem __instance)
-            {
-                FrozenFood ff = __instance.gameObject.GetComponent<FrozenFood>();
-
-                if(ff != null && !GameManager.m_ActiveScene.Contains("menu"))
-                {
-                    ff.Serialize();
-                }
-            }
-
-        }
-
-
     }
 }

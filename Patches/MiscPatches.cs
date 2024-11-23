@@ -33,28 +33,6 @@ namespace FrozenFood.Patches
                 }
 
             }
-
-
-        }
-
-        [HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.AddItemToPlayerInventory))]
-
-        public class AddItemToInvClass
-        {
-
-            private static void Postfix(GearItem gi)
-            {
-
-                if (gi.m_FoodItem)
-                {
-                    if(gi.GetComponent<FrozenFood>() != null)
-                    {
-                        gi.GetComponent<FrozenFood>().PickedUp();
-                    }
-                }
-
-            }
-
         }
 
         [HarmonyPatch(typeof(Inventory), "RemoveGear", new Type[] {typeof(GameObject), typeof(bool)})]
@@ -80,7 +58,7 @@ namespace FrozenFood.Patches
         [HarmonyPatch(typeof(ItemDescriptionPage), nameof(ItemDescriptionPage.UpdateGearItemDescription))]
 
 
-        public class GodHelpMe
+        public class UpdateFrozenDesc
         {
 
             private static void Postfix(ItemDescriptionPage __instance, GearItem gi)
