@@ -407,8 +407,8 @@ namespace FrozenFood
 
         public string GetFoodType(string item)
         {
-            if (item == "GEAR_Crackers" || item == "GEAR_KetchupChips" || item == "GEAR_BeefJerky" || item == "GEAR_GranolaBar" || item == "GEAR_CandyBar" || item.Contains("Stew") || item.Contains("Pie")) return "Dry";
-            else if (item.ToLowerInvariant().Contains("meat") || item.Contains("CohoSalmon") || item.Contains("LakeWhiteFish") || item.Contains("RainbowTrout") || item.Contains("SmallMouthBass") || item == "GEAR_PinnacleCanPeaches" || item == "GEAR_TomatoSoupCan" || item == "GEAR_CannedSardines" || item == "GEAR_PinnacleCanPeaches" || item == "GEAR_CondensedMilk" || item.Contains("Corn") || item.Contains("Broth")) return "Wet";
+            if (item == "GEAR_Crackers" || item.Contains("Cereal") || item == "GEAR_KetchupChips" || item == "GEAR_BeefJerky" || item == "GEAR_GranolaBar" || item == "GEAR_CandyBar" || item.Contains("Stew") || item.Contains("Pie") || item == "GEAR_CuredMeat" || item == "GEAR_CuredFish" || item == "GEAR_DriedApples" || item.ToLowerInvariant().Contains("pemmican")) return "Dry";
+            else if (item.ToLowerInvariant().Contains("meat") || item.Contains("CohoSalmon") || item.Contains("LakeWhiteFish") || item.Contains("RainbowTrout") || item.Contains("SmallMouthBass") || item == "GEAR_PinnacleCanPeaches" || item == "GEAR_TomatoSoupCan" || item == "GEAR_CannedSardines" || item == "GEAR_PinnacleCanPeaches" || item == "GEAR_CondensedMilk" || item.Contains("Corn") || item.Contains("Broth") || item.Contains("Soup") || item.Contains("Pickles")) return "Wet";
             else return "Mid";
         }
 
