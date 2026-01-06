@@ -15,5 +15,5 @@ internal static class BuildInfo
 {
 	internal const string ModName = "Frozen Food";
 	internal const string ModAuthor = "Fuar";
-	internal const string ModVersion = "1.5.0";
+	internal const string ModVersion = "1.5.1";
 }
