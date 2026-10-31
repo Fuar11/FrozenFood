@@ -12,12 +12,17 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<TheLongDarkPath>C:\Program Files (x86)\Steam\steamapps\common\TheLongDark</TheLongDarkPath>
+		<TheLongDarkPath>C:\Games\Steam\steamapps\common\TheLongDark</TheLongDarkPath>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="STBlade.Modding.TLD.Il2CppAssemblies.Windows" Version="2.51.0" />
-		<PackageReference Include="stblade.Modding.TLD.ModData" Version="1.5.1" />
+		<PackageReference Include="MonsieurMeh.Modding.TLD.Il2CppAssemblies.Windows" Version="2.58.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="ModData">
+			<HintPath>$(TheLongDarkPath)\Mods\ModData.dll</HintPath>
+		</Reference>
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">

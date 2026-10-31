@@ -11,7 +11,6 @@ using UnityEngine;
 using System.Text.Json;
 using static Il2CppSystem.Globalization.TimeSpanParse;
 using Random = System.Random;
-using Il2CppXGamingRuntime.Interop;
 
 namespace FrozenFood
 {
@@ -120,6 +119,8 @@ namespace FrozenFood
             else
             {
 
+                MelonLogger.Msg("No data found for {0} with GUID {1}, initializing new data", this.gameObject.name, m_GUID.PDID);
+
                 if (harvestCheck)
                 {
                     m_PercentFrozen = m_PercentFrozenFromHarvest;
@@ -198,22 +199,21 @@ namespace FrozenFood
 
             if(m_GearItem.name.ToLowerInvariant().Contains("soda")) sdp.m_TimeSodaBeenFrozen = m_TimeSodaBeenFrozen;
 
-           
-                if (IsNearFire(10))
-                {
-                    Fire closestFire = GameManager.GetFireManagerComponent().GetClosestFire(this.gameObject.transform.position);
+            if (IsNearFire(10))
+            {
+                Fire closestFire = GameManager.GetFireManagerComponent().GetClosestFire(this.gameObject.transform.position);
 
-                    if (closestFire != null)
-                    {
-                        sdp.m_HoursRemainingOnClosestFire = closestFire.GetRemainingLifeTimeSeconds() / 3600f;
-                        sdp.m_MaxFireTemperature = closestFire.m_HeatSource.m_TempIncrease;
-                        sdp.m_ActualTemperature = GameManager.GetWeatherComponent().GetCurrentTemperatureWithoutHeatSources();
-                    }
+                if (closestFire != null)
+                {           
+                    sdp.m_HoursRemainingOnClosestFire = closestFire.GetRemainingLifeTimeSeconds() / 3600f;
+                    sdp.m_MaxFireTemperature = closestFire.m_HeatSource.m_TempIncrease;
+                    sdp.m_ActualTemperature = GameManager.GetWeatherComponent().GetCurrentTemperatureWithoutHeatSources();
                 }
-                else
-                {
-                    sdp.m_ActualTemperature = GetCurrentAirTemp();
-                }
+            }
+            else
+            {
+                sdp.m_ActualTemperature = GetCurrentAirTemp();
+            }
 
             string dataToSave = JsonSerializer.Serialize(sdp); //instance in json format to save with
             sdm.Save(dataToSave, m_GUID.PDID);

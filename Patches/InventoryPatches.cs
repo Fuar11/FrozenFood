@@ -51,6 +51,12 @@ namespace FrozenFood.Patches
             {
                 foreach(GearItem gi in __instance.m_Items)
                 {
+                    if(gi.gameObject == null)
+                    {
+                        MelonLogger.Msg("GearItem object in container null");
+                        return;
+                    }
+
                     FrozenFood ff = gi.gameObject.GetComponent<FrozenFood>();
 
                     if (ff != null) ff.Update();

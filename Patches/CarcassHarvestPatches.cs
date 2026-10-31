@@ -9,7 +9,6 @@ using Il2Cpp;
 using UnityEngine;
 using Il2CppTLD.Stats;
 using Il2CppTLD.SaveState;
-using Unity.VisualScripting;
 using Il2CppTLD.IntBackedUnit;
 
 namespace FrozenFood.Patches

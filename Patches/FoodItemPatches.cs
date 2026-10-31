@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using HarmonyLib;
+using MelonLoader;
 
 namespace FrozenFood.Patches
 {
@@ -34,13 +35,14 @@ namespace FrozenFood.Patches
 
         }
 
-        [HarmonyPatch(typeof(FoodItem), nameof(FoodItem.Serialize))]
+        [HarmonyPatch(typeof(GearItem), nameof(GearItem.Serialize))]
 
         public class FrozenFood_Save
         {
-            private static void Postfix(FoodItem __instance)
+            private static void Postfix(GearItem __instance)
             {
                 FrozenFood ff = __instance.gameObject.GetComponent<FrozenFood>();
+
 
                 if (ff != null && !GameManager.m_ActiveScene.Contains("menu"))
                 {
